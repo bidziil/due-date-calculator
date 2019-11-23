@@ -34,12 +34,18 @@ class DueDateCalculatorTest {
 	public static Collection<Object[]> parameters() {
 		Collection<Object[]> parameters = new ArrayList<Object[]>();
 		
-		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), null,                LocalDateTime.of(2019, 06, 06,  9, 59) });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), Duration.ofHours(0), LocalDateTime.of(2019, 05, 05,  9, 59) });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), Duration.ofHours(2), LocalDateTime.of(2019, 06, 06, 11, 59) });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06, 16, 59), Duration.ofHours(1), LocalDateTime.of(2019, 06, 06,  9, 59) });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 30, 16, 59), Duration.ofHours(1), LocalDateTime.of(2019, 07, 01,  9, 59) });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 12, 31, 16, 59), Duration.ofHours(0), LocalDateTime.of(2020, 01, 05,  9, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 00), null,                 LocalDateTime.of(2019, 06, 06,  9, 00) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06, 17, 00), null,                 LocalDateTime.of(2019, 06, 06, 17, 00) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), null,                 LocalDateTime.of(2019, 06, 06,  9, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), Duration.ofHours(0),  LocalDateTime.of(2019, 06, 06,  9, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), Duration.ofHours(2),  LocalDateTime.of(2019, 06, 06, 11, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06,  9, 59), Duration.ofHours(20), LocalDateTime.of(2019, 06, 10, 13, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 07,  9, 59), Duration.ofHours(2),  LocalDateTime.of(2019, 06, 07, 11, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 07,  9, 59), Duration.ofHours(20), LocalDateTime.of(2019, 06, 11, 13, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 06, 16, 59), Duration.ofHours(1),  LocalDateTime.of(2019, 06, 07,  9, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 07, 16, 59), Duration.ofHours(2),  LocalDateTime.of(2019, 06, 10, 10, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 06, 28, 16, 59), Duration.ofHours(1),  LocalDateTime.of(2019, 07, 01,  9, 59) });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 12, 31, 16, 59), Duration.ofHours(1),  LocalDateTime.of(2020, 01, 01,  9, 59) });
 		
 		return parameters;
 	}
@@ -47,15 +53,20 @@ class DueDateCalculatorTest {
 	@ParameterizedTest
 	@MethodSource("parameters")
 	void testCalculateDueDate(LocalDateTime submitDateTime, Duration turnaroundTime, LocalDateTime expectedResult) {
-		// Given:
-		LOGGER.fine(String.format("testCalculateDueDate start %s %s", submitDateTime, turnaroundTime));
-		
-		// When:
-		LocalDateTime result = dueDateCalculator.calculateDueDate(submitDateTime, turnaroundTime);
-		
-		// Then:
-		assertNotNull(result);
-		assertEquals(expectedResult, result);
+		try {
+			// Given:
+			LOGGER.fine(String.format("testCalculateDueDate start %s %s", submitDateTime, turnaroundTime));
+			
+			// When:
+			LocalDateTime result = dueDateCalculator.calculateDueDate(submitDateTime, turnaroundTime);
+			
+			// Then:
+			assertNotNull(result);
+			assertEquals(expectedResult, result);
+		} catch (Exception ex) {
+			System.err.print(ex.getMessage());
+			ex.printStackTrace(System.err);
+		}
 	}
 
 	public static Collection<Object[]> parameters_WrongWorkingHours() {
@@ -63,7 +74,7 @@ class DueDateCalculatorTest {
 		
 		parameters.add(new Object[] { null, null });
 		parameters.add(new Object[] { LocalDateTime.of(2019, 05, 05, 8, 59), null });
-		parameters.add(new Object[] { LocalDateTime.of(2019, 05, 05, 17, 59), null });
+		parameters.add(new Object[] { LocalDateTime.of(2019, 05, 05, 17, 01), null });
 		
 		return parameters;
 	}
