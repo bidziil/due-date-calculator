@@ -28,7 +28,7 @@ public class DueDateCalculator {
 	 * @return the date/time when the issue is resolved
 	 **/
 	public LocalDateTime calculateDueDate(final LocalDateTime submitDateTime, Duration turnaroundTime) {
-		LOGGER.info(String.format("calculateDueDate start submitDateTime:%s turnaroundTime:%s", submitDateTime, turnaroundTime));
+		LOGGER.info(String.format("calculateDueDate start; submitDateTime:%s turnaroundTime:%s", submitDateTime, turnaroundTime));
 		
 		boolean isReportedDuringWorkingHours = isWorkingHours(submitDateTime);
 		if (!isReportedDuringWorkingHours) {
@@ -38,13 +38,12 @@ public class DueDateCalculator {
 		if (isNull(turnaroundTime) || Duration.ZERO.equals(turnaroundTime)) {
 			return submitDateTime;
 		}
-		LocalDateTime resolvedDateTime = submitDateTime;
 		
+		LocalDateTime resolvedDateTime = submitDateTime;
 		do {
 			if (isTheWorkDoneToday(resolvedDateTime, turnaroundTime)) {
 				resolvedDateTime = resolvedDateTime.plus(turnaroundTime);
 				turnaroundTime = turnaroundTime.minus(turnaroundTime);
-				LOGGER.fine(String.format("resolvedDateTime:%s turnaroundTime:%s", resolvedDateTime, turnaroundTime));
 			} else {
 				resolvedDateTime = nextWorkStart(resolvedDateTime);
 				if (turnaroundTime.compareTo(WORK_HOUR_PER_DAY) > 0) {
@@ -53,10 +52,11 @@ public class DueDateCalculator {
 					Duration overAchieved = Duration.between(resolvedDateTime.toLocalTime(), FINISH_HOUR);
 					resolvedDateTime = LocalDateTime.of(resolvedDateTime.toLocalDate(), START_HOUR).minusSeconds(overAchieved.getSeconds());
 				}
-				LOGGER.fine(String.format("resolvedDateTime:%s turnaroundTime:%s", resolvedDateTime, turnaroundTime));
 			}
+			LOGGER.fine(String.format("resolvedDateTime:%s turnaroundTime:%s", resolvedDateTime, turnaroundTime));
 		} while (!turnaroundTime.isZero() && !turnaroundTime.isNegative());
 		
+		LOGGER.info(String.format("calculateDueDate finished; resolvedDateTime:%s", resolvedDateTime));
 		return resolvedDateTime;
 	}
 

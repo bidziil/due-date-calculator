@@ -53,20 +53,15 @@ class DueDateCalculatorTest {
 	@ParameterizedTest
 	@MethodSource("parameters")
 	void testCalculateDueDate(LocalDateTime submitDateTime, Duration turnaroundTime, LocalDateTime expectedResult) {
-		try {
-			// Given:
-			LOGGER.fine(String.format("testCalculateDueDate start %s %s", submitDateTime, turnaroundTime));
-			
-			// When:
-			LocalDateTime result = dueDateCalculator.calculateDueDate(submitDateTime, turnaroundTime);
-			
-			// Then:
-			assertNotNull(result);
-			assertEquals(expectedResult, result);
-		} catch (Exception ex) {
-			System.err.print(ex.getMessage());
-			ex.printStackTrace(System.err);
-		}
+		// Given:
+		LOGGER.fine(String.format("testCalculateDueDate start %s %s", submitDateTime, turnaroundTime));
+		
+		// When:
+		LocalDateTime result = dueDateCalculator.calculateDueDate(submitDateTime, turnaroundTime);
+		
+		// Then:
+		assertNotNull(result);
+		assertEquals(expectedResult, result);
 	}
 
 	public static Collection<Object[]> parameters_WrongWorkingHours() {
